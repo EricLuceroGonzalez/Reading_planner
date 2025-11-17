@@ -452,8 +452,8 @@ if "book_list" not in st.session_state:
 
 # --- Barra Lateral ---
 st.sidebar.header(t("sidebar_config"))
-organizer_name = st.sidebar.text_input(t("your_name"), "Eric")
-organizer_email = st.sidebar.text_input(t("your_email"), "ericlucero501@gmail.com")
+organizer_name = st.sidebar.text_input(t("your_name"), "", placeholder="Tu nombre...")
+organizer_email = st.sidebar.text_input(t("your_email"), "", placeholder="Tu email...")
 
 today = datetime.date.today()
 start_date = st.sidebar.date_input(t("start_date"), today + timedelta(days=1))
