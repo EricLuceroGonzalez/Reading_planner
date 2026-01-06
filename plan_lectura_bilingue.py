@@ -456,6 +456,7 @@ organizer_name = st.sidebar.text_input(t("your_name"), "", placeholder="Tu nombr
 organizer_email = st.sidebar.text_input(t("your_email"), "", placeholder="Tu email...")
 
 today = datetime.date.today()
+st.sidebar.caption(t("speeds_caption"))
 start_date = st.sidebar.date_input(t("start_date"), today + timedelta(days=1))
 end_date = st.sidebar.date_input(t("end_date"), today + timedelta(days=121))
 
