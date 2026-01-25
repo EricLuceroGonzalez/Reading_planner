@@ -102,6 +102,7 @@ def clear_book_list():
 def calculate_reading_time_minutes(
     book: Book, reading_speeds: Dict[str, float]
 ) -> float:
+    # Calculate reading time:
     minutes_per_page = reading_speeds.get(book.category, 2.0)
     return book.pages * minutes_per_page
 
@@ -258,7 +259,9 @@ def create_reading_plan(
     books_completed = []
     current_book_index = 0
     current_date = start_date
-
+    remaining_pages = book_schedule_list[current_book_index].pages
+    print("\n***********************************")
+    print(f"Initial remaining pages: {remaining_pages}")
     total_book_hours_calc = sum(
         calculate_reading_time_hours(book, reading_speeds)
         for book in book_schedule_list
@@ -268,9 +271,14 @@ def create_reading_plan(
     current_book_remaining_min = calculate_reading_time_minutes(
         current_book, reading_speeds
     )
-
+    print("===" * 25)
+    # Heart of everything. Goes book by book counting days and minutes.
     while current_date <= end_date:
         weekday = current_date.weekday()
+        # print(f": {}")
+        minutes_per_page = reading_speeds.get(
+            book_schedule_list[current_book_index].category, 2.0
+        )
 
         if weekday in reading_weekdays:
             session_start_time = datetime.datetime.combine(
@@ -288,7 +296,11 @@ def create_reading_plan(
                 time_to_dedicate = min(
                     remaining_session_time, current_book_remaining_min
                 )
-
+                start_session_page = remaining_pages
+                remaining_pages = remaining_pages - (
+                    time_to_dedicate / minutes_per_page
+                )
+                # If book remaining time is over OR this session time is over: END
                 if time_to_dedicate <= 0:
                     break
 
@@ -300,6 +312,8 @@ def create_reading_plan(
                     t(
                         "reading_description",
                         book=book_name,
+                        start_session_page=f"{start_session_page:.0f}",
+                        remaining_pages=f"{remaining_pages:.0f}",
                         remaining=f"{current_book_remaining_min:.0f}",
                         duration=f"{time_to_dedicate:.0f}",
                     ),
@@ -430,6 +444,7 @@ col_title, col_lang = st.columns([5, 1])
 with col_title:
     st.title(t("main_title"))
     st.write(t("main_subtitle"))
+    st.write(t("main_subtitle_msg"))
 
 with col_lang:
     st.write("")  # Espaciado
@@ -456,7 +471,6 @@ organizer_name = st.sidebar.text_input(t("your_name"), "", placeholder="Tu nombr
 organizer_email = st.sidebar.text_input(t("your_email"), "", placeholder="Tu email...")
 
 today = datetime.date.today()
-st.sidebar.caption(t("speeds_caption"))
 start_date = st.sidebar.date_input(t("start_date"), today + timedelta(days=1))
 end_date = st.sidebar.date_input(t("end_date"), today + timedelta(days=121))
 
@@ -464,6 +478,7 @@ if start_date >= end_date:
     st.sidebar.error(t("date_error"))
 
 st.sidebar.header(t("sidebar_times"))
+st.sidebar.caption(t("speeds_caption"))
 daily_time_total_minutes = st.sidebar.slider(t("daily_minutes"), 60, 480, 120, 5)
 review_time_per_book_min = st.sidebar.slider(t("review_minutes"), 30, 120, 60, 5)
 
@@ -529,7 +544,7 @@ if st.session_state.book_list:
         st.session_state.book_list,
         num_rows="dynamic",
         key="editor_libros",
-        use_container_width=True,
+        width="stretch",
     )
 
     if st.button(t("clear_list")):
