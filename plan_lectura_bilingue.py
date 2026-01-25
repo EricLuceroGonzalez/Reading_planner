@@ -259,6 +259,7 @@ def create_reading_plan(
     books_completed = []
     current_book_index = 0
     current_date = start_date
+    start_session_page = 0
     remaining_pages = book_schedule_list[current_book_index].pages
     print("\n***********************************")
     print(f"Initial remaining pages: {remaining_pages}")
@@ -296,10 +297,12 @@ def create_reading_plan(
                 time_to_dedicate = min(
                     remaining_session_time, current_book_remaining_min
                 )
-                start_session_page = remaining_pages
+
                 remaining_pages = remaining_pages - (
                     time_to_dedicate / minutes_per_page
                 )
+                print(f"start_session_page: {start_session_page}")
+                print(f"remaining_pages: {remaining_pages}")
                 # If book remaining time is over OR this session time is over: END
                 if time_to_dedicate <= 0:
                     break
@@ -322,7 +325,7 @@ def create_reading_plan(
                     reminders_config,
                     location=t("study_room"),
                 )
-
+                start_session_page = remaining_pages
                 current_book_remaining_min -= time_to_dedicate
                 remaining_session_time -= time_to_dedicate
                 session_start_time += timedelta(minutes=time_to_dedicate)
