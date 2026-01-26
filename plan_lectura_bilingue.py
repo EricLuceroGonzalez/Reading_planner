@@ -259,37 +259,42 @@ def create_reading_plan(
     books_completed = []
     current_book_index = 0
     current_date = start_date
-    start_session_page = 0
-    remaining_pages = book_schedule_list[current_book_index].pages
     print("\n***********************************")
-    print(f"Initial remaining pages: {remaining_pages}")
+    print("***********************************")
     total_book_hours_calc = sum(
         calculate_reading_time_hours(book, reading_speeds)
         for book in book_schedule_list
     )
-
     current_book = book_schedule_list[current_book_index]
     current_book_remaining_min = calculate_reading_time_minutes(
         current_book, reading_speeds
     )
     print("===" * 25)
+    remaining_pages = book_schedule_list[current_book_index].pages
+    start_session_page = 0
     # Heart of everything. Goes book by book counting days and minutes.
     while current_date <= end_date:
-        weekday = current_date.weekday()
         # print(f": {}")
+        weekday = current_date.weekday()
         minutes_per_page = reading_speeds.get(
             book_schedule_list[current_book_index].category, 2.0
         )
+        print(
+            f"\n🟢 book_index: {current_book_index} | {book_schedule_list[current_book_index].title}"
+        )
+
+        print(f"Initial remaining pages: {remaining_pages}")
 
         if weekday in reading_weekdays:
             session_start_time = datetime.datetime.combine(
                 current_date, start_time_books
             )
             remaining_session_time = daily_time_books_min
-
             while remaining_session_time > 0 and current_book_index < len(
                 book_schedule_list
             ):
+                this_book_pages = book_schedule_list[current_book_index].pages
+
                 current_book = book_schedule_list[current_book_index]
                 book_name = current_book.title
                 book_hours = calculate_reading_time_hours(current_book, reading_speeds)
@@ -297,12 +302,12 @@ def create_reading_plan(
                 time_to_dedicate = min(
                     remaining_session_time, current_book_remaining_min
                 )
-
                 remaining_pages = remaining_pages - (
                     time_to_dedicate / minutes_per_page
                 )
-                print(f"start_session_page: {start_session_page}")
-                print(f"remaining_pages: {remaining_pages}")
+                # print(f": {}")
+                print(f"start_session_page: {start_session_page:.0f}")
+                print(f"🟣 remaining_pages: {remaining_pages:.0f}")
                 # If book remaining time is over OR this session time is over: END
                 if time_to_dedicate <= 0:
                     break
@@ -338,7 +343,8 @@ def create_reading_plan(
                             t("end_date"): current_date.strftime("%Y-%m-%d"),
                         }
                     )
-
+                    print(f"✅ Book finished: {book_name}")
+                    start_session_page = 0
                     next_review_date = current_date + timedelta(days=1)
                     schedule_book_review(
                         events,
@@ -355,6 +361,7 @@ def create_reading_plan(
 
                     current_book_index += 1
                     if current_book_index < len(book_schedule_list):
+                        remaining_pages = book_schedule_list[current_book_index].pages
                         next_book = book_schedule_list[current_book_index]
                         current_book_remaining_min = calculate_reading_time_minutes(
                             next_book, reading_speeds
