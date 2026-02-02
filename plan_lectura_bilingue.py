@@ -271,7 +271,9 @@ def create_reading_plan(
     )
     print("===" * 25)
     remaining_pages = book_schedule_list[current_book_index].pages
+
     start_session_page = 0
+    final_session_page = 0
     # Heart of everything. Goes book by book counting days and minutes.
     while current_date <= end_date:
         # print(f": {}")
@@ -305,9 +307,12 @@ def create_reading_plan(
                 remaining_pages = remaining_pages - (
                     time_to_dedicate / minutes_per_page
                 )
+                final_session_page = this_book_pages - remaining_pages
+
                 # print(f": {}")
-                print(f"start_session_page: {start_session_page:.0f}")
-                print(f"🟣 remaining_pages: {remaining_pages:.0f}")
+                # print(f"start_session_page: {start_session_page:.0f}")
+                # print(f"🟣 remaining_pages: {remaining_pages:.0f}")
+                # print(f"📚 final_session_page: {final_session_page:.0f}")
                 # If book remaining time is over OR this session time is over: END
                 if time_to_dedicate <= 0:
                     break
@@ -322,6 +327,7 @@ def create_reading_plan(
                         book=book_name,
                         start_session_page=f"{start_session_page:.0f}",
                         remaining_pages=f"{remaining_pages:.0f}",
+                        final_session_page=f"{final_session_page:.0f}",
                         remaining=f"{current_book_remaining_min:.0f}",
                         duration=f"{time_to_dedicate:.0f}",
                     ),
@@ -330,7 +336,9 @@ def create_reading_plan(
                     reminders_config,
                     location=t("study_room"),
                 )
-                start_session_page = remaining_pages
+                start_session_page = (
+                    book_schedule_list[current_book_index].pages - remaining_pages
+                )
                 current_book_remaining_min -= time_to_dedicate
                 remaining_session_time -= time_to_dedicate
                 session_start_time += timedelta(minutes=time_to_dedicate)
@@ -343,7 +351,7 @@ def create_reading_plan(
                             t("end_date"): current_date.strftime("%Y-%m-%d"),
                         }
                     )
-                    print(f"✅ Book finished: {book_name}")
+                    # print(f"✅ Book finished: {book_name}\n\n")
                     start_session_page = 0
                     next_review_date = current_date + timedelta(days=1)
                     schedule_book_review(

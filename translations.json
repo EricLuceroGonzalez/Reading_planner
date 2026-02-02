@@ -56,7 +56,7 @@
         "reading_session": "📚 LECTURA: {book}",
         "review_session": "🔄 REVISIÓN COMPLETA: {book}",
         "final_review": "🎓 REVISIÓN GENERAL FINAL",
-        "reading_description": "Sesión de lectura profunda\n\n📖 Libro: {book}\n🥶Página de inicio: {start_session_page}\n🥹Página al terminar: {remaining_pages}\n⏳ Tiempo restante del libro: {remaining} min\n⏱️ Duración sesión: {duration} min",
+        "reading_description": "Sesión de lectura profunda\n\n📖 Libro: {book}\n🥶Página de inicio: {start_session_page}\n🥹Página al terminar: {final_session_page}\n📖Paginas restantes: {remaining_pages}\n⏳ Tiempo restante del libro: {remaining} min\n⏱️ Duración sesión: {duration} min",
         "review_description": "Sesión de consolidación y Active Recall\n\n📚 Libro completado: {book}\n⏱️ Tiempo total invertido: {hours} horas\n🎯 Duración de revisión: {duration} minutos\n\nOBJETIVOS DE LA SESIÓN:\n✓ Active Recall completo del libro\n✓ Revisar todas las notas y anotaciones\n✓ Crear/actualizar mapa conceptual\n✓ Conectar con otros libros leídos\n✓ Elaborar resumen ejecutivo",
         "final_description": "Sesión de integración. ¡Todos los libros completados!\nLibros completados: {count}",
         "study_room": "Sala de estudio",
